@@ -7,19 +7,45 @@ import numpy as np
 import random
 from dash.dependencies import Output, Input
 from dash_extensions import Keyboard
+from enum import Enum
 
 ## Classes
 class GameController:
 	'''Responds to player and drop-clock inputs and maintains the game state array'''
 	
-	class activePiece
+	class ActivePiece:
+	    
+	    def __init__(self, *, shape, coord):
+	        self._shape = shape # should be string from shapes tuple
+	        self._coord = coord # should be 
+	    
 	
 	## Properties
-	shapes = ('square', 'iPiece', 'sPiece', 'zPiece', 'tPiece')
+	class Shapes(Enum):
+	    SQUARE = 0,
+	    IPIECE = 1,
+	    SPIECE = 2,
+	    ZPIECE = 3,
+	    TPIECE = 4,
+	    LPIECE = 5,
+	    FPIECE = 6,
 	
+	defaultMapping = (
+	    # square
+	    (np.array([[0, 0, 0, 0],
+	              [0, 1, 1, 0],
+	              [0, -1, 1, 0],
+	              [0, 0, 0, 0]]), # -1 marks the anchor point of the shape
+	    0), # no. of rotations. squares don't rotate in tetris
+	)	
+	                
+	shapes = ('square', 'iPiece', 'sPiece', 'zPiece', 'tPiece', 'lPiece', 'fPiece') # TODO should use an enum
 	
 	
 	## Methods
+	def _getRandShape(self) -> str:
+	    return shapes[random.randrange(0,len(shapes))]
+	
 	def dropNewPiece(self, shape = 'rand'):
 		if shape == 'rand':
 			shape = self.shapes(random.randrange(0,len(shapes) - 1))
@@ -35,9 +61,9 @@ class GameController:
 			}
 			
 
-## Variables
+## Variables TODO get rid of these and pass them instead Dash is not designed to work with globals
 
-framebuffer = np.array([np.array([np.zeros(3, dtype = np.uint8) for i in range(10)]) for i in range(20)])
+framebuffer = np.array([np.array([np.zeros(3, dtype = np.uint8) for i in range(10)]) for i in range(20)]) # 20 rows of 10 columns of 8 bit rgb
 
 fig = px.imshow(framebuffer)
 
