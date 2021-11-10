@@ -43,29 +43,9 @@ class Shape:
         self.current_rotindex = self._next_index()
         return self.currentPoints()
     
-    # class methods
     
-    def gridular_rotate(point): 
-        '''Given a point on a discrete 2d grid, rotate it 90 degrees clockwise about the origin'''
-        return (-point[1], point[0])
-
-    def get_points_from(shape_mapping):
-        '''Returns a list of points specifying filled positions in an array relative to an anchor. Input is a 2-d array. The 'anchor' is defined as the first entry (L->R, row by row) equal to '-1', and from the anchor the relative position of all cells equal to '1' is returned.'''
-        anchor = None
-        points = []
-        for row_index in range(len(shape_mapping)):
-            for column_index in range(len(shape_mapping[row_index])):
-                if shape_mapping[row_index, column_index] == 1:
-                    points.append((row_index, column_index))
-                elif shape_mapping[row_index, column_index] == -1:
-                    anchor = (row_index, column_index)
-        if anchor == None: raise ValueError('Anchor not found in shape mapping')
-        
-        row, column = zip(*points) # moving origin to anchor
-        new_row = (row - anchor[0] for row in row) 
-        new_column = (column - anchor[1] for column in column)
-        points = list(zip(new_row, new_column))
-        return points
+    
+    
 
 
 class ActivePiece:
@@ -77,13 +57,6 @@ class ActivePiece:
 class GameController:
     '''Responds to player and drop-clock inputs and maintains the game state array'''
     
-    
-    
-    
-    
-    
-        
-    
     ## Properties
     class Shapes(Enum):
         SQUARE = 0,
@@ -94,51 +67,6 @@ class GameController:
         LPIECE = 5,
         FPIECE = 6,
     
-    class Colors(Enum):  # use yankee spelling
-        WHITE = np.array([255,255,255], np.uint8)
-    
-    class Shape:
-        '''All play pieces are shapes.'''
-        def __init__(self, *, default_mapping, color = Colors.WHITE,
-                     rotation_cycle_length = 4):
-            
-            self.default_mapping = default_mapping
-            self.color = color
-            self.current_rotindex = 0
-            self.rotation_cycle_length = rotation_cycle_length
-            self.points = [get_points_from(default_mapping)]
-            
-            for _ in range(rotation_cycle_length):
-                points.append(gridular_rotate(points[-1]))
-            
-            
-        def _next_index():
-            return (self.current_rotindex + 1) % self.rotation_cycle_length
-            
-        def current_points():
-            return self.points[self.current_rotindex]
-            
-        def next_points():
-            return self.points[self._next_index()]
-            
-        def rotated_points():
-            self.current_rotindex = self._next_index()
-            return self.currentPoints()
-       
-        def getCurrentLayout(self):
-            return self.default_mapping
-            
-        def getNextLayout(self):
-            return self.default_mapping
-        
-        
-        
-        def getColor(self):
-            return self.color
-            
-        
-    
-
         
     default_mapping = ( # instead of each piece's properties in a tuple we could make them 
                        # objects and store them in the enum directly.
@@ -186,6 +114,34 @@ class GameController:
                 'activePiece': None
             }
             
+def gridular_rotate(points): 
+    '''Given a list of points on a discrete 2d grid, rotate it 90 degrees clockwise about the origin'''
+    new_points = []
+    for point in points:
+        new_points.append((point[1], -point[0]))
+        #new_points.append((-point[1], point[0])) # CCW (array coord system)
+    return new_points
+
+def get_points_from(shape_mapping):
+    '''Returns a list of points specifying filled positions in an array relative to an anchor. Input is a 2-d array. The 'anchor' is defined as the first entry (L->R, row by row) equal to '-1', and from the anchor the relative position of all cells equal to '1' is returned.'''
+    anchor = None
+    points = []
+    for row_index in range(len(shape_mapping)):
+        for column_index in range(len(shape_mapping[row_index])):
+            if shape_mapping[row_index, column_index] == 1:
+                points.append((row_index, column_index))
+            elif shape_mapping[row_index, column_index] == -1:
+                anchor = (row_index, column_index)
+    if anchor == None: raise ValueError('Anchor not found in shape mapping')
+    
+    row, column = zip(*points) # moving origin to anchor
+    new_row = (row - anchor[0] for row in row) 
+    new_column = (column - anchor[1] for column in column)
+    points = list(zip(new_row, new_column))
+    return points
+
+
+
 
 ## Variables TODO get rid of these and pass them instead Dash is not designed to work with globals
 
