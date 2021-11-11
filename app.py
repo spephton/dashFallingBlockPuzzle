@@ -118,8 +118,8 @@ def gridular_rotate(points):
     '''Given a list of points on a discrete 2d grid, rotate it 90 degrees clockwise about the origin'''
     new_points = []
     for point in points:
-        new_points.append((point[1], -point[0]))
-        #new_points.append((-point[1], point[0])) # CCW (array coord system)
+        new_points.append((point[1], -point[0])) # CW in array coord system
+        #new_points.append((-point[1], point[0])) # CCW in array coord system
     return new_points
 
 def get_points_from(shape_mapping):
@@ -128,9 +128,9 @@ def get_points_from(shape_mapping):
     points = []
     for row_index in range(len(shape_mapping)):
         for column_index in range(len(shape_mapping[row_index])):
-            if shape_mapping[row_index, column_index] == 1:
+            if shape_mapping[row_index][column_index] == 1:
                 points.append((row_index, column_index))
-            elif shape_mapping[row_index, column_index] == -1:
+            elif shape_mapping[row_index][column_index] == -1:
                 anchor = (row_index, column_index)
     if anchor == None: raise ValueError('Anchor not found in shape mapping')
     
